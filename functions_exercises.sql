@@ -29,8 +29,8 @@ SELECT
 	CONCAT(SUBSTR(LOWER(first_name), 1, 1),
 		 SUBSTR(LOWER(last_name), 1, 4),
 		  '_',
-		  LPAD(MONTH(birth_date), 2, '0'),
-		  SUBSTR(YEAR(birth_date), 3, 2)), 
+		  SUBSTR(birth_date, 6, 2),
+		  SUBSTR(birth_date, 3, 2)), 
 	first_name,
 	last_name,
 	birth_date 
