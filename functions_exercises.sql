@@ -13,8 +13,7 @@ SELECT UPPER(CONCAT(first_name, ' ', last_name)) AS full_name FROM employees WHE
 # Find all employees hired in the 90s and born on Christmas
 # and display total days of employment
 SELECT *, DATEDIFF(CURDATE(), hire_date) AS total_days_of_employment FROM employees 
-WHERE hire_date BETWEEN '1990-01-01' AND '1999-12-31' 
-	AND DATE_FORMAT(birth_date, '%m-%d') = DATE_FORMAT('9999-12-25', '%m-%d');
+WHERE hire_date LIKE '199%' AND birth_date LIKE '%-12-25';
 	
 # 5
 # Find the smallest and largest current salary from the salaries table
