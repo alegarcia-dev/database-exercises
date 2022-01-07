@@ -2,21 +2,21 @@ USE albums_db;
 DESCRIBE albums;
 SELECT * FROM albums;
 
-# Count the total number of rows in albums
+# Count the total number of rows in albums: 31 rows
 # We could also look at the total number of rows under the content tab in Sequel Ace
 SELECT COUNT(*) FROM albums;
 
-# Count the number of distinct artist names in albums
+# Count the number of distinct artist names in albums: 23 rows
 # We could also observe the number of rows returned without the COUNT function
 SELECT COUNT(DISTINCT artist) FROM albums;
 
 # The primary key is id
 
-# Get the oldest release date
+# Get the oldest release date: 1967
 # We could also view contents and order by release_date to get both minimum and maximum
 SELECT MIN(release_date) FROM albums;
 
-# Get the latest release date
+# Get the latest release date: 2011
 SELECT MAX(release_date) FROM albums;
 
 # Get albums by Pink Floyd
