@@ -24,14 +24,13 @@ SELECT MIN(salary), MAX(salary) FROM salaries;
 # 6
 # Generate table of usernames with conditions: all lowercase, first character of first name
 # first 4 characters of last name, an underscore, month, and last two digits of year.
-# Limit 50 so it doesn't take so long to execute.
 SELECT 
 	CONCAT(SUBSTR(LOWER(first_name), 1, 1),
-		 SUBSTR(LOWER(last_name), 1, 4),
+		  SUBSTR(LOWER(last_name), 1, 4),
 		  '_',
 		  SUBSTR(birth_date, 6, 2),
-		  SUBSTR(birth_date, 3, 2)), 
+		  SUBSTR(birth_date, 3, 2)) AS username, 
 	first_name,
 	last_name,
 	birth_date 
-FROM employees LIMIT 50;
+FROM employees;
