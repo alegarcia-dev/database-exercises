@@ -88,9 +88,10 @@ FROM salaries
 GROUP BY emp_no;
 
 # 9.2
-# Determine number of employees working in each department from dept_emp table.
+# Determine number of current employees working in each department from dept_emp table.
 SELECT dept_no, COUNT(emp_no)
 FROM dept_emp
+WHERE to_date = '9999-01-01'
 GROUP BY dept_no;
 
 # 9.3
