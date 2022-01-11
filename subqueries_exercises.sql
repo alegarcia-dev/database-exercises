@@ -21,7 +21,7 @@ WHERE emp_no IN
 
 # 3
 # How many people in the employees table are no longer working for the company? Give the answer in a comment in your code.
-# Number of non-current employees: 85108
+# Number of non-current employees: 59900
 SELECT COUNT(*)
 FROM employees
 WHERE emp_no IN
