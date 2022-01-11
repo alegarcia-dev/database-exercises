@@ -194,17 +194,29 @@ ORDER BY departments.dept_name, Employee_Name;
 
 # 12
 # Who is the highest paid employee within each department.
-
-# INCOMPLETE
-
-SELECT
-	departments.dept_name AS Department_Name,
-	MAX(salaries.salary) AS Salary
-FROM salaries
-JOIN dept_emp
-	ON salaries.emp_no = dept_emp.emp_no
+SELECT 
+	CONCAT(employees.first_name, ' ', employees.last_name) AS Name,
+	departments.dept_name AS Department,
+	highest_salaries.salary AS Salary
+FROM dept_emp
+JOIN salaries
+	ON dept_emp.emp_no = salaries.emp_no
 JOIN departments
 	ON dept_emp.dept_no = departments.dept_no
+JOIN employees
+	ON dept_emp.emp_no = employees.emp_no
+JOIN (
+		SELECT
+			dept_emp.dept_no as dept_number,
+			MAX(salaries.salary) AS salary
+		FROM salaries
+		JOIN dept_emp
+			ON salaries.emp_no = dept_emp.emp_no
+		WHERE dept_emp.to_date > CURDATE()
+			AND salaries.to_date > CURDATE()
+		GROUP BY dept_emp.dept_no
+	) AS highest_salaries
+	ON highest_salaries.salary = salaries.salary
+	AND highest_salaries.dept_number = dept_emp.dept_no
 WHERE dept_emp.to_date > CURDATE()
-	AND salaries.to_date > CURDATE()
-GROUP BY dept_emp.dept_no;
+ORDER BY Department;
