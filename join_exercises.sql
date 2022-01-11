@@ -213,10 +213,8 @@ JOIN (
 		JOIN dept_emp
 			ON salaries.emp_no = dept_emp.emp_no
 		WHERE dept_emp.to_date > CURDATE()
-			AND salaries.to_date > CURDATE()
 		GROUP BY dept_emp.dept_no
 	) AS highest_salaries
 	ON highest_salaries.salary = salaries.salary
 	AND highest_salaries.dept_number = dept_emp.dept_no
-WHERE dept_emp.to_date > CURDATE()
 ORDER BY Department;
