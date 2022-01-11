@@ -28,7 +28,8 @@ WHERE emp_no IN
 	(
 		SELECT emp_no
 		FROM dept_emp
-		WHERE to_date < CURDATE()
+		GROUP BY emp_no
+		HAVING MAX(to_date) < CURDATE()
 	);
 
 # 4
