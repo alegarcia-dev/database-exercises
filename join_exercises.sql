@@ -197,7 +197,7 @@ ORDER BY departments.dept_name, Employee_Name;
 SELECT 
 	CONCAT(employees.first_name, ' ', employees.last_name) AS Name,
 	departments.dept_name AS Department,
-	highest_salaries.salary AS Salary
+	salaries.salary AS Salary
 FROM dept_emp
 JOIN salaries USING(emp_no)
 JOIN departments USING(dept_no)
@@ -211,5 +211,4 @@ JOIN (
 		WHERE salaries.to_date > CURDATE()
 		GROUP BY dept_emp.dept_no
 	) AS highest_salaries
- 	ON highest_salaries.salary = salaries.salary
-	AND highest_salaries.dept_no = dept_emp.dept_no;
+	USING(salary, dept_no);
