@@ -17,7 +17,8 @@ SELECT
 FROM titles
 WHERE emp_no IN
 	(SELECT emp_no FROM employees WHERE first_name = 'Aamod')
-	AND to_date > CURDATE();
+	AND emp_no IN
+	(SELECT emp_no FROM titles WHERE to_date > CURDATE());
 
 # 3
 # How many people in the employees table are no longer working for the company? Give the answer in a comment in your code.
