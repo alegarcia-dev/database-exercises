@@ -1,6 +1,7 @@
 # 1
 # Find all the current employees with the same hire date as employee 101010 using a sub-query.
 SELECT
+	CONCAT(first_name, ' ', last_name) AS Name,
 	emp_no,
 	hire_date
 FROM employees
@@ -12,9 +13,10 @@ WHERE hire_date =
 # 2
 # Find all the titles ever held by all current employees with the first name Aamod.
 SELECT
-	title,
-	emp_no
+	titles.title,
+	CONCAT(employees.first_name, ' ', employees.last_name) AS Name
 FROM titles
+JOIN employees USING (emp_no)
 WHERE emp_no IN
 	(SELECT emp_no FROM employees WHERE first_name = 'Aamod')
 	AND emp_no IN
@@ -49,11 +51,13 @@ WHERE emp_no IN
 # 5
 # Find all the employees who currently have a higher salary than the company's overall, historical average salary.
 SELECT
-	emp_no,
-	salary
+	CONCAT(employees.first_name, ' ', employees.last_name) AS Name,
+	salaries.salary
 FROM salaries
+JOIN employees USING (emp_no)
 WHERE to_date > CURDATE()
-	AND salary > (SELECT AVG(salary) FROM salaries);
+	AND salary > (SELECT AVG(salary) FROM salaries)
+ORDER BY salaries.salary;
 
 # 6
 # How many current salaries are within 1 standard deviation of the current highest salary? 
