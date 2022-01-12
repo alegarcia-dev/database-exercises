@@ -146,10 +146,3 @@ WHERE city.Name = @x;
 
 # 6
 # What is the life expectancy in city x?
-SELECT
-	dept_emp.dept_no,
-	MAX(salaries.salary) AS salary
-FROM salaries
-JOIN dept_emp USING(emp_no)
-WHERE salaries.to_date > CURDATE()
-GROUP BY dept_emp.dept_no;
