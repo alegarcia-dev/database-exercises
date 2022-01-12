@@ -204,7 +204,7 @@ JOIN departments USING(dept_no)
 JOIN employees USING(emp_no)
 JOIN (
 		SELECT
-			dept_emp.dept_no AS dept_number,
+			dept_emp.dept_no,
 			MAX(salaries.salary) AS salary
 		FROM salaries
 		JOIN dept_emp USING(emp_no)
@@ -212,4 +212,4 @@ JOIN (
 		GROUP BY dept_emp.dept_no
 	) AS highest_salaries
  	ON highest_salaries.salary = salaries.salary
-	AND highest_salaries.dept_number = dept_emp.dept_no;
+	AND highest_salaries.dept_no = dept_emp.dept_no;
