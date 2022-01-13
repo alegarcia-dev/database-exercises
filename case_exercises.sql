@@ -83,5 +83,6 @@ FROM salaries
 JOIN dept_emp USING (emp_no)
 JOIN departments USING (dept_no)
 WHERE salaries.to_date > CURDATE()
+	AND dept_emp.to_date > CURDATE()
 GROUP BY Department_Group
 ORDER BY Average_Salary DESC;
