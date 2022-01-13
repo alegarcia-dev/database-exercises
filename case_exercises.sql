@@ -49,8 +49,8 @@ ORDER BY Name;
 SELECT
 	CONCAT(first_name, ' ', last_name) AS Name,
 	CASE 
-		WHEN SUBSTR(last_name, 1, 1) BETWEEN 'A' AND 'H' THEN 'A-H'
-		WHEN SUBSTR(last_name, 1, 1) BETWEEN 'I' AND 'Q' THEN 'I-Q'
+		WHEN last_name REGEXP '^[A-H].*' THEN 'A-H'
+		WHEN last_name REGEXP '^[I-Q].*' THEN 'I-Q'
 		ELSE 'R-Z'
 	END AS Alpha_Group
 FROM employees
