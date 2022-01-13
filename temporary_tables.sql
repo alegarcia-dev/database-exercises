@@ -101,7 +101,7 @@ AS
 CREATE TEMPORARY TABLE innis_1653.overall_average_salary
 AS SELECT AVG(salary) FROM salaries;
 
- # Calculate the over standard deviation
+ # Calculate the overall standard deviation
 CREATE TEMPORARY TABLE innis_1653.overall_standard_deviation
 AS SELECT STDDEV(salary) FROM salaries;
 
