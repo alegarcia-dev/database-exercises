@@ -5,9 +5,9 @@
 SELECT
     CONCAT(employees.first_name, ' ', employees.last_name) AS Name,
     dept_emp.dept_no AS Department_Number,
-    employees.hire_date AS Start_Date,
+    dept_emp.from_date AS Start_Date,
     dept_emp.to_date AS End_Date,
-    IF(dept_emp.to_date > CURDATE(), 1, 0) AS is_current_employee
+    dept_emp.to_date > CURDATE() AS is_current_employee
 FROM employees
 JOIN dept_emp USING (emp_no)
 ORDER BY Name;
@@ -19,7 +19,7 @@ SELECT
     most_recent.dept_no AS Department_Number,
     employees.hire_date AS Start_Date,
     most_recent.to_date AS End_Date,
-    IF(most_recent.to_date > CURDATE(), 1, 0) AS is_current_employee
+    most_recent.to_date > CURDATE() AS is_current_employee
 FROM employees
 JOIN
     (
@@ -56,6 +56,29 @@ SELECT
 FROM employees
 ORDER BY last_name;
 
+# A cleaner solution
+SELECT
+	CONCAT(first_name, ' ', last_name) AS Name,
+	CASE 
+		WHEN LEFT(last_name, 1) <= 'H' THEN 'A-H'
+		WHEN LEFT(last_name, 1) <= 'Q' THEN 'I-Q'
+		ELSE 'R-Z'
+	END AS Alpha_Group
+FROM employees
+ORDER BY last_name;
+
+# An even cleaner solution
+
+SELECT
+	CONCAT(first_name, ' ', last_name) AS Name,
+	CASE 
+		WHEN last_name < 'I' THEN 'A-H'
+		WHEN last_name < 'R' THEN 'I-Q'
+		ELSE 'R-Z'
+	END AS Alpha_Group
+FROM employees
+ORDER BY last_name;
+
 # 3
 # How many employees (current or previous) were born in each decade?
 # Results:
@@ -66,6 +89,14 @@ SELECT
 	SUM(IF(birth_date LIKE '196%', 1, 0)) AS Born_in_the_60s,
 	SUM(IF(birth_date LIKE '197%', 1, 0)) AS Born_in_the_70s
 FROM employees;
+
+# A more robust solution
+
+SELECT
+	CONCAT(SUBSTR(birth_date, 1, 3), '0') AS decade,
+	COUNT(*)
+FROM employees
+GROUP BY decade;
 
 # 4
 # What is the current average salary for each of the following department groups: 
