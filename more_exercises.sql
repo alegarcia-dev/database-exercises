@@ -30,6 +30,14 @@ WHERE dept_manager.to_date > CURDATE()
 	AND salaries.to_date > CURDATE()
 ORDER BY Difference;
 
+
+
+
+
+
+
+
+
 # World database
 
 USE world;
@@ -156,11 +164,19 @@ JOIN city
 	ON country.Code = city.CountryCode
 WHERE city.Name = @x;
 
+
+
+
+
+
+
+
+
 # Sakila Database
 
 USE Sakila;
 
-# First group of exercises
+# First group of exercises for Sakila database
 
 # 1a
 # Select all columns from the actor table.
@@ -409,3 +425,310 @@ SELECT
 FROM staff
 LEFT JOIN address USING (address_id)
 LEFT JOIN city USING (city_id);
+
+
+
+
+
+# Second group of exercises for Sakila database
+
+# 1
+# Display the first and last names in all lowercase of all the actors.
+SELECT LOWER(first_name), LOWER(last_name) FROM actor;
+
+# 2
+# You need to find the ID number, first name, and last name of an actor, of whom you know only the first name, "Joe." 
+# What is one query would you could use to obtain this information?
+SELECT
+	actor_id,
+	first_name,
+	last_name
+FROM actor
+WHERE first_name = 'Joe';
+
+# 3
+# Find all actors whose last name contain the letters "gen":
+SELECT last_name
+FROM actor
+WHERE last_name LIKE '%gen%';
+
+# 4
+# Find all actors whose last names contain the letters "li". This time, order the rows by last name and first name, in that order.
+SELECT last_name, first_name
+FROM actor
+WHERE last_name LIKE '%li%'
+ORDER BY last_name, first_name;
+
+# 5
+# Using IN, display the country_id and country columns for the following countries: Afghanistan, Bangladesh, and China:
+SELECT country_id, country
+FROM country
+WHERE country IN ('Afghanistan', 'Bangladesh', 'China');
+
+# 6
+# List the last names of all the actors, as well as how many actors have that last name.
+SELECT last_name, COUNT(*)
+FROM actor
+GROUP BY last_name;
+
+# 7
+# List last names of actors and the number of actors who have that last name, but only for names that are shared by at least two actors.
+SELECT last_name, COUNT(*) AS actors_with_name
+FROM actor
+GROUP BY last_name
+HAVING actors_with_name > 1;
+
+# 8
+# You cannot locate the schema of the address table. Which query would you use to re-create it?
+DESCRIBE address;
+
+# 9
+# Use JOIN to display the first and last names, as well as the address, of each staff member.
+SELECT
+	staff.first_name,
+	staff.last_name,
+	address.address
+FROM staff
+JOIN address USING (address_id);
+
+# 10
+# Use JOIN to display the total amount rung up by each staff member in August of 2005.
+SELECT
+	CONCAT(staff.first_name, ' ', staff.last_name) AS Name,
+	SUM(payment.amount)
+FROM staff
+JOIN payment USING (staff_id)
+WHERE payment_date LIKE '2005-08-%'
+GROUP BY Name;
+
+# 11
+# List each film and the number of actors who are listed for that film.
+SELECT
+	film.title,
+	COUNT(actor_id) AS num_actors_in_film
+FROM film
+JOIN film_actor USING (film_id)
+GROUP BY film.title;
+
+# 12
+# How many copies of the film Hunchback Impossible exist in the inventory system?
+SELECT
+	COUNT(*) AS copies_of_hunchback_impossible
+FROM inventory
+JOIN film USING (film_id)
+WHERE film.title = 'Hunchback Impossible';
+
+# 13
+# The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an unintended consequence, 
+# films starting with the letters K and Q have also soared in popularity. Use subqueries to display the titles 
+# of movies starting with the letters K and Q whose language is English.
+SELECT
+	film.title
+FROM film
+JOIN language USING (language_id)
+WHERE language.name = 'English';
+
+# 14
+# Use subqueries to display all actors who appear in the film Alone Trip.
+SELECT
+	actor_id
+FROM actor
+WHERE actor_id IN
+	(
+		SELECT actor_id
+		FROM film_actor
+		WHERE film_id =
+			(
+				SELECT film_id
+				FROM film
+				WHERE title = 'Alone Trip'
+			)
+	);
+
+# 15
+# You want to run an email marketing campaign in Canada, for which you will need the names and email addresses of all Canadian customers.
+SELECT
+	CONCAT(customer.first_name, ' ', customer.last_name) AS Name,
+	customer.email
+FROM customer
+JOIN address USING (address_id)
+JOIN city USING (city_id)
+JOIN country USING (country_id)
+WHERE country.country = 'Canada';
+
+# 16
+# Sales have been lagging among young families, and you wish to target all family movies for a promotion. Identify all movies categorized as family films.
+SELECT film.title
+FROM film
+JOIN film_category USING (film_id)
+JOIN category USING (category_id)
+WHERE category.name = 'Family';
+
+# 17
+# Write a query to display how much business, in dollars, each store brought in.
+SELECT
+	store.store_id,
+	SUM(payment.amount) AS total_revenue
+FROM store
+JOIN staff USING (store_id)
+JOIN payment USING (staff_id)
+GROUP BY store.store_id;
+
+# 18
+# Write a query to display for each store its store ID, city, and country.
+SELECT
+	store.store_id,
+	city.city,
+	country.country
+FROM store
+JOIN address USING (address_id)
+JOIN city USING (city_id)
+JOIN country USING (country_id);
+
+# 19
+# List the top five genres in gross revenue in descending order. (Hint: you may need to use the following tables: 
+# category, film_category, inventory, payment, and rental.)
+SELECT
+	category.name AS Genre,
+	SUM(payment.amount) AS Gross_Revenue
+FROM category
+JOIN film_category USING (category_id)
+JOIN inventory USING (film_id)
+JOIN rental USING (inventory_id)
+JOIN payment USING (rental_id)
+GROUP BY Genre
+ORDER BY Gross_Revenue DESC
+LIMIT 5;
+
+
+
+
+
+# Third group of exercises for Sakila database
+
+# 1
+# What is the average replacement cost of a film? Does this change depending on the rating of the film?
+SELECT AVG(replacement_cost) FROM film;
+
+# It does change depending on the rating.
+SELECT
+	AVG(replacement_cost),
+	rating
+FROM film
+GROUP BY rating;
+
+# 2
+# How many different films of each genre are in the database?
+SELECT
+	category.name,
+	COUNT(*)
+FROM category
+JOIN film_category USING (category_id)
+GROUP BY category.name;
+
+# 3
+# What are the 5 frequently rented films?
+SELECT
+	film.title,
+	COUNT(*) AS total
+FROM film
+JOIN inventory USING (film_id)
+JOIN rental USING (inventory_id)
+GROUP BY film.title
+ORDER BY total
+LIMIT 5;
+
+# 4
+# What are the most most profitable films (in terms of gross revenue)?
+SELECT
+	film.title,
+	SUM(payment.amount) AS total
+FROM film
+JOIN inventory USING (film_id)
+JOIN rental USING (inventory_id)
+JOIN payment USING (rental_id)
+GROUP BY film.title
+ORDER BY total DESC
+LIMIT 5;
+
+# 5
+# Who is the best customer?
+SELECT
+	CONCAT(first_name, ' ' , last_name) AS Name,
+	SUM(payment.amount) AS total
+FROM customer
+JOIN payment USING (customer_id)
+GROUP BY Name
+ORDER BY total DESC
+LIMIT 1;
+
+# 6
+# Who are the most popular actors (that have appeared in the most films)?
+SELECT
+	CONCAT(first_name, ' ', last_name) AS Name,
+	COUNT(*) AS total
+FROM actor
+JOIN film_actor USING (actor_id)
+GROUP BY actor_id
+ORDER BY total DESC
+LIMIT 5;
+
+# 7
+# What are the sales for each store for each month in 2005?
+SELECT
+	DATE_FORMAT(payment_date, '%Y-%m') AS month,
+	store_id,
+	SUM(amount) AS sales
+FROM payment
+JOIN staff USING (staff_id)
+JOIN store USING (store_id)
+WHERE payment_date LIKE '2005%'
+GROUP BY month, store_id
+ORDER BY month;
+
+# 8
+# Find the film title, customer name, customer phone number, and customer address for all the outstanding DVDs.
+SELECT
+	title,
+	CONCAT(first_name, ' ', last_name) AS name,
+	phone,
+	address
+FROM rental
+JOIN inventory USING (inventory_id)
+JOIN film USING (film_id)
+JOIN customer USING (customer_id)
+JOIN address USING (address_id)
+WHERE return_date IS NULL;
+
+
+
+
+
+
+
+
+
+
+
+# Pizza Database
+
+
+
+
+# 1a
+# What information is stored in the toppings table? How does this table relate to the pizzas table?
+
+# The toppings table has the fields topping_id, topping_name and topping_price. This has a many to many relationship with the pizzas table.
+# The pizza_toppings table relates these two which has a topping_id key relating to the toppings table and a pizza_id key
+# relating to the pizzas table.
+
+# 1b
+# What information is stored in the modifiers table? How does this table relate to the pizzas table?
+
+# The modifiers table has the fields modifier_id, modifier_name and modifier_price. This table has a many to many relationship with the
+# pizzas table. The pizza_modifiers table relates these two which has a modifier_id key relating to the modifiers table and a pizza_id
+# key relating to the pizzas table.
+
+# 1c
+# How are the pizzas and sizes tables related?
+
