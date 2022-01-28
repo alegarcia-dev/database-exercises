@@ -732,3 +732,79 @@ WHERE return_date IS NULL;
 # 1c
 # How are the pizzas and sizes tables related?
 
+# The pizzas and sizes tables are related by the size_id key. This is a one to many relationship where each pizza has one size but each
+# size can be assigned to many pizzas.
+
+# 1d
+# What other tables are in the database?
+
+# The only other table is the crust_types table which links to the pizza table through the crust_type_id key. This is a one to many relationship.
+
+# 1e
+# How many unique toppings are there?
+# 9
+SELECT COUNT(DISTINCT topping_name) FROM toppings;
+
+# 1f
+# How many unique orders are in this dataset?
+# 10000
+SELECT COUNT(DISTINCT order_id) FROM pizzas;
+
+# 1g
+# Which size of pizza is sold the most?
+# large
+SELECT size_name
+FROM sizes
+JOIN (
+    SELECT size_id, COUNT(size_id) as count
+    FROM pizzas
+    GROUP BY size_id
+    ORDER BY count DESC
+    LIMIT 1
+) as counts USING (size_id);
+
+# 1h
+# How many pizzas have been sold in total?
+# 20001
+SELECT COUNT(*) FROM pizzas;
+
+# 1i
+# What is the most common size of pizza ordered?
+# large
+
+# 1j
+# What is the average number of pizzas per order?
+# 2.0001
+SELECT
+    AVG(number_of_pizzas)
+FROM (
+    SELECT
+        COUNT(pizza_id) as number_of_pizzas
+    FROM pizzas
+    GROUP BY order_id
+) as pizza_counts_per_order;
+
+# 2
+# Find the total price for each order. The total price is the sum of:
+# - The price based on pizza size
+# - Any modifiers that need to be charged for
+# - The sum of the topping prices
+# Topping price is affected by the amount of the topping specified. A light amount 
+# is half of the regular price. An extra amount is 1.5 times the regular price, and 
+# double of the topping is double the price.
+
+SELECT
+    order_id,
+    ROUND(SUM(size_price) + total_modifier_price, 2) as total_price
+FROM pizzas
+JOIN sizes USING (size_id)
+JOIN (
+    SELECT
+        order_id,
+        SUM(IF(modifier_id IS NULL, 0, modifier_price)) AS total_modifier_price
+    FROM pizzas
+    LEFT JOIN pizza_modifiers USING (pizza_id)
+    LEFT JOIN modifiers USING (modifier_id)
+    GROUP BY order_id
+) AS modifier_prices USING (order_id)
+GROUP BY order_id;
