@@ -795,10 +795,15 @@ FROM (
 
 SELECT
     order_id,
-    ROUND(SUM(size_price) + total_modifier_price, 2) as total_price
+    ROUND(
+		SUM(size_price) + 
+		IF(total_modifier_price IS NULL, 0, total_modifier_price) + 
+		IF(total_topping_price IS NULL, 0, total_topping_price), 
+		2
+	) as total_price
 FROM pizzas
 JOIN sizes USING (size_id)
-JOIN (
+LEFT JOIN (
     SELECT
         order_id,
         SUM(IF(modifier_id IS NULL, 0, modifier_price)) AS total_modifier_price
@@ -807,13 +812,20 @@ JOIN (
     LEFT JOIN modifiers USING (modifier_id)
     GROUP BY order_id
 ) AS modifier_prices USING (order_id)
-GROUP BY order_id;
-
-# Work in progress
-SELECT
-    order_id,
-    SUM(topping_price)
-FROM pizzas
-LEFT JOIN pizza_toppings USING (pizza_id)
-LEFT JOIN toppings USING (topping_id)
+LEFT JOIN (
+	SELECT
+		order_id,
+		SUM(
+			CASE topping_amount
+				WHEN 'light' THEN topping_price * 0.5
+				WHEN 'extra' THEN topping_price * 1.5
+				WHEN 'double' THEN topping_price * 2
+				ELSE topping_price
+			END
+		) AS total_topping_price
+	FROM pizzas
+	LEFT JOIN pizza_toppings USING (pizza_id)
+	LEFT JOIN toppings USING (topping_id)
+	GROUP BY order_id
+) AS topping_prices USING (order_id)
 GROUP BY order_id;
