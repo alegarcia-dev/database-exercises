@@ -808,3 +808,12 @@ JOIN (
     GROUP BY order_id
 ) AS modifier_prices USING (order_id)
 GROUP BY order_id;
+
+# Work in progress
+SELECT
+    order_id,
+    SUM(topping_price)
+FROM pizzas
+LEFT JOIN pizza_toppings USING (pizza_id)
+LEFT JOIN toppings USING (topping_id)
+GROUP BY order_id;
